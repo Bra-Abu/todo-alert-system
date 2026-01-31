@@ -905,8 +905,15 @@ function calculatePeriodStats(tasks, periods, unit) {
   const results = [];
 
   for (let i = periods - 1; i >= 0; i--) {
-    const periodStart = new Date(now);
-    const periodEnd = new Date(now);
+    let periodStart = new Date(now);
+    let periodEnd = new Date(now);
+
+    // CRITICAL FIX: Reset to the 1st of the month/year BEFORE changing month/year
+    // to avoid "30th of Feb" overflow bugs (e.g. Jan 31 -> Feb 31 becomes Mar 3)
+    if (unit === 'month' || unit === 'year') {
+      periodStart.setDate(1);
+      periodEnd.setDate(1);
+    }
 
     if (unit === 'day') {
       periodStart.setDate(now.getDate() - i);
@@ -914,21 +921,28 @@ function calculatePeriodStats(tasks, periods, unit) {
       periodEnd.setDate(now.getDate() - i);
       periodEnd.setHours(23, 59, 59, 999);
     } else if (unit === 'week') {
-      periodStart.setDate(now.getDate() - (i * 7));
+      // Calculate start of the week (Sunday)
+      const firstDay = now.getDate() - now.getDay() - (i * 7);
+      periodStart.setDate(firstDay);
       periodStart.setHours(0, 0, 0, 0);
-      periodEnd.setDate(now.getDate() - ((i - 1) * 7) - 1);
+
+      periodEnd = new Date(periodStart);
+      periodEnd.setDate(periodStart.getDate() + 6);
       periodEnd.setHours(23, 59, 59, 999);
     } else if (unit === 'month') {
       periodStart.setMonth(now.getMonth() - i);
-      periodStart.setDate(1);
       periodStart.setHours(0, 0, 0, 0);
-      periodEnd.setMonth(now.getMonth() - i + 1);
+
+      // End of month: Go to next month, then subtract 1 day
+      periodEnd = new Date(periodStart);
+      periodEnd.setMonth(periodStart.getMonth() + 1);
       periodEnd.setDate(0);
       periodEnd.setHours(23, 59, 59, 999);
     } else if (unit === 'year') {
       periodStart.setFullYear(now.getFullYear() - i);
       periodStart.setMonth(0, 1);
       periodStart.setHours(0, 0, 0, 0);
+
       periodEnd.setFullYear(now.getFullYear() - i);
       periodEnd.setMonth(11, 31);
       periodEnd.setHours(23, 59, 59, 999);
