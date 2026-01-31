@@ -270,13 +270,22 @@ const taskDB = {
   },
 
   getDueTasks: () => {
+    // Optimized: Filter by date/time in SQL instead of JavaScript
+    const now = new Date();
+    const currentDate = now.toISOString().split('T')[0];
+    const currentTime = now.toTimeString().split(' ')[0].substring(0, 5);
+
     const tasks = db.prepare(`
       SELECT tasks.*, users.whatsapp_enabled, users.telegram_enabled, users.sms_enabled,
              users.whatsapp_number, users.telegram_chat_id, users.sms_number, users.phone_number
       FROM tasks
       INNER JOIN users ON tasks.user_id = users.id
       WHERE tasks.completed = 0
-    `).all();
+        AND (
+          tasks.due_date < ?
+          OR (tasks.due_date = ? AND tasks.due_time <= ?)
+        )
+    `).all(currentDate, currentDate, currentTime);
 
     for (const task of tasks) {
       task.subtasks = db.prepare('SELECT * FROM subtasks WHERE task_id = ?').all(task.id);

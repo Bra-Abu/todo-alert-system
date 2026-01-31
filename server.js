@@ -7,7 +7,6 @@ const twilio = require('twilio');
 const TelegramBot = require('node-telegram-bot-api');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
-const bcrypt = require('bcrypt');
 const { db, userDB, taskDB, subtaskDB, otpDB } = require('./database');
 require('dotenv').config();
 
@@ -62,7 +61,23 @@ if (process.env.TWILIO_ACCOUNT_SID &&
 // Initialize Telegram Bot
 let telegramBot = null;
 if (process.env.TELEGRAM_BOT_TOKEN && !process.env.TELEGRAM_BOT_TOKEN.includes('your_')) {
-  telegramBot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
+  telegramBot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, {
+    polling: {
+      params: {
+        timeout: 10
+      }
+    }
+  });
+
+  // Error handler to prevent log spam from polling conflicts
+  telegramBot.on('polling_error', (error) => {
+    // 409 Conflict means another instance is running (e.g., local + Railway)
+    if (error.code === 'ETELEGRAM' && error.message.includes('409 Conflict')) {
+      console.log('⚠️  Telegram polling conflict - Another instance may be running');
+    } else {
+      console.error('Telegram error:', error.message);
+    }
+  });
 
   // Telegram bot commands
   telegramBot.onText(/\/start/, (msg) => {
@@ -310,7 +325,13 @@ function calculateNextDate(currentDate, recurring) {
       date.setDate(date.getDate() + 7);
       break;
     case 'monthly':
+      // Special handling to keep the date sticky (e.g. keep it on the 31st or last day of month)
+      const originalDay = date.getDate();
       date.setMonth(date.getMonth() + 1);
+      // If the day changed (e.g. Jan 31 -> Mar 3), set to last day of previous month
+      if (date.getDate() !== originalDay) {
+        date.setDate(0); // Set to last day of previous month
+      }
       break;
   }
 
@@ -359,12 +380,12 @@ app.post('/api/auth/send-otp', async (req, res) => {
     if (sent) {
       res.json({ message: 'OTP sent successfully', phoneNumber });
     } else {
-      // For development/testing - return OTP in response if SMS fails
-      console.log(`OTP for ${phoneNumber}: ${code}`);
+      // For development/testing - OTP is logged to server console only (never sent to client)
+      console.log(`[DEV ONLY] OTP for ${phoneNumber}: ${code}`);
       res.json({
-        message: 'OTP generated (SMS not configured)',
-        phoneNumber,
-        otp: code // Remove this in production
+        message: 'OTP generated (Check server logs)',
+        phoneNumber
+        // Security: OTP never sent to client
       });
     }
   } catch (error) {
