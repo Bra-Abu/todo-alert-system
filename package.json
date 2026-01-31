@@ -1,0 +1,35 @@
+{
+  "name": "todo-alert-system",
+  "version": "1.0.0",
+  "description": "Smart todo system with WhatsApp and Telegram alerts",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "todo",
+    "alerts",
+    "whatsapp",
+    "telegram",
+    "reminders"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^12.6.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.19.0",
+    "node-cron": "^3.0.3",
+    "node-telegram-bot-api": "^0.64.0",
+    "twilio": "^4.20.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

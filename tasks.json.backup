@@ -1,0 +1,82 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Pray Fajr",
+      "description": "Salaat ",
+      "dueDate": "2026-01-30",
+      "dueTime": "05:00",
+      "recurring": "daily",
+      "notified": true,
+      "completed": false,
+      "createdAt": "2026-01-30T02:29:11.791Z"
+    },
+    {
+      "id": 2,
+      "title": "Take Bath",
+      "description": "Morning Bath",
+      "dueDate": "2026-01-30",
+      "dueTime": "02:49",
+      "recurring": "none",
+      "notified": true,
+      "completed": false,
+      "createdAt": "2026-01-30T02:48:13.673Z"
+    },
+    {
+      "id": 3,
+      "title": "Study for LPT",
+      "description": "",
+      "dueDate": "2026-01-30",
+      "dueTime": "14:00",
+      "recurring": "daily",
+      "notified": true,
+      "completed": false,
+      "createdAt": "2026-01-30T03:02:00.061Z"
+    },
+    {
+      "id": 4,
+      "title": "Pray Fajr",
+      "description": "Salaat ",
+      "dueDate": "2026-01-31",
+      "dueTime": "05:00",
+      "recurring": "daily",
+      "notified": true,
+      "completed": false,
+      "createdAt": "2026-01-30T07:14:01.366Z"
+    },
+    {
+      "id": 5,
+      "title": "Study for LPT",
+      "description": "",
+      "dueDate": "2026-01-31",
+      "dueTime": "14:00",
+      "recurring": "daily",
+      "notified": true,
+      "completed": false,
+      "createdAt": "2026-01-30T17:33:00.909Z"
+    },
+    {
+      "id": 6,
+      "title": "Pray Fajr",
+      "description": "Salaat ",
+      "dueDate": "2026-02-01",
+      "dueTime": "05:00",
+      "recurring": "daily",
+      "notified": false,
+      "completed": false,
+      "createdAt": "2026-01-31T06:06:01.000Z"
+    },
+    {
+      "id": 7,
+      "title": "Study for LPT",
+      "description": "",
+      "dueDate": "2026-02-01",
+      "dueTime": "14:00",
+      "recurring": "daily",
+      "notified": false,
+      "completed": false,
+      "createdAt": "2026-01-31T14:06:01.109Z"
+    }
+  ],
+  "nextId": 8
+}

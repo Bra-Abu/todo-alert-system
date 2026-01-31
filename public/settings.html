@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Todo Alert System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .settings-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .settings-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .settings-header h1 {
+      font-size: 2rem;
+      color: var(--text-primary);
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .preference-item {
+      background: var(--hover-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .preference-item:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .preference-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .preference-info h3 {
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      margin-bottom: 5px;
+    }
+
+    .preference-info p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 30px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--success);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(30px);
+    }
+
+    .preference-details {
+      display: none;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .preference-details.active {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .input-group small {
+      display: block;
+      margin-top: 5px;
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+    }
+
+    .btn-test {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: var(--info);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-test:hover {
+      background: var(--info-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-test:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn-save {
+      flex: 1;
+      padding: 14px;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-save:hover {
+      background: var(--success-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 14px;
+      background: var(--hover-bg);
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn-cancel:hover {
+      border-color: var(--primary);
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      animation: slideDown 0.3s ease;
+    }
+
+    .message.success {
+      background: var(--priority-low-bg);
+      color: var(--priority-low-text);
+      border: 1px solid var(--priority-low-border);
+    }
+
+    .message.error {
+      background: var(--priority-high-bg);
+      color: var(--priority-high-text);
+      border: 1px solid var(--priority-high-border);
+    }
+
+    .message.info {
+      background: rgba(66, 153, 225, 0.1);
+      color: var(--info);
+      border: 1px solid var(--info);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      opacity: 0.8;
+      transform: translateX(-5px);
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // Check authentication
+    (async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/check', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (!data.authenticated) {
+          window.location.href = '/login.html';
+        } else {
+          window.currentUser = data.user;
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        window.location.href = '/login.html';
+      }
+    })();
+  </script>
+
+  <div class="settings-container">
+    <div class="settings-card">
+      <div class="settings-header">
+        <h1>⚙️ Alert Settings</h1>
+        <a href="/" class="back-link">← Back to Dashboard</a>
+      </div>
+
+      <div id="messageContainer"></div>
+
+      <form id="settingsForm">
+        <div class="section-title">📱 Notification Channels</div>
+
+        <!-- WhatsApp -->
+        <div class="preference-item">
+          <div class="preference-header">
+            <div class="preference-info">
+              <h3>WhatsApp</h3>
+              <p>Receive task alerts via WhatsApp</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="whatsappEnabled">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="preference-details" id="whatsappDetails">
+            <div class="input-group">
+              <label for="whatsappNumber">WhatsApp Number</label>
+              <input
+                type="tel"
+                id="whatsappNumber"
+                placeholder="+1234567890"
+                pattern="^\+?[1-9]\d{1,14}$"
+              >
+              <small>Enter in E.164 format (e.g., +1234567890) - must start with whatsapp: in Twilio sandbox</small>
+            </div>
+            <button type="button" class="btn-test" id="testWhatsApp">Send Test Message</button>
+          </div>
+        </div>
+
+        <!-- Telegram -->
+        <div class="preference-item">
+          <div class="preference-header">
+            <div class="preference-info">
+              <h3>Telegram</h3>
+              <p>Receive task alerts via Telegram</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="telegramEnabled">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="preference-details" id="telegramDetails">
+            <div class="input-group">
+              <label for="telegramChatId">Telegram Chat ID</label>
+              <input
+                type="text"
+                id="telegramChatId"
+                placeholder="123456789"
+              >
+              <small>
+                Get your Chat ID: Start a chat with @TodoAlertBot (or your bot) and send /start
+              </small>
+            </div>
+            <button type="button" class="btn-test" id="testTelegram">Send Test Message</button>
+          </div>
+        </div>
+
+        <!-- SMS -->
+        <div class="preference-item">
+          <div class="preference-header">
+            <div class="preference-info">
+              <h3>SMS</h3>
+              <p>Receive task alerts via SMS text messages</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="smsEnabled">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="preference-details" id="smsDetails">
+            <div class="input-group">
+              <label for="smsNumber">SMS Number</label>
+              <input
+                type="tel"
+                id="smsNumber"
+                placeholder="+1234567890"
+                pattern="^\+?[1-9]\d{1,14}$"
+              >
+              <small>Enter in E.164 format (e.g., +1234567890)</small>
+            </div>
+            <button type="button" class="btn-test" id="testSMS">Send Test Message</button>
+          </div>
+        </div>
+
+        <!-- Browser Notifications -->
+        <div class="preference-item">
+          <div class="preference-header">
+            <div class="preference-info">
+              <h3>Browser Notifications</h3>
+              <p>Receive desktop notifications when browser is open</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="browserEnabled">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button type="submit" class="btn-save">Save Preferences</button>
+          <a href="/" class="btn-cancel">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Show/hide preference details when toggled
+    function setupToggle(toggleId, detailsId) {
+      const toggle = document.getElementById(toggleId);
+      const details = document.getElementById(detailsId);
+
+      toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+          details.classList.add('active');
+        } else {
+          details.classList.remove('active');
+        }
+      });
+    }
+
+    setupToggle('whatsappEnabled', 'whatsappDetails');
+    setupToggle('telegramEnabled', 'telegramDetails');
+    setupToggle('smsEnabled', 'smsDetails');
+
+    // Show message
+    function showMessage(text, type = 'info') {
+      const container = document.getElementById('messageContainer');
+      container.innerHTML = `<div class="message ${type}">${text}</div>`;
+      setTimeout(() => {
+        container.innerHTML = '';
+      }, 5000);
+    }
+
+    // Load current preferences
+    async function loadPreferences() {
+      try {
+        const response = await fetch('/api/user/preferences', {
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const prefs = await response.json();
+
+          document.getElementById('whatsappEnabled').checked = prefs.whatsapp_enabled;
+          document.getElementById('whatsappNumber').value = prefs.whatsapp_number || '';
+          if (prefs.whatsapp_enabled) {
+            document.getElementById('whatsappDetails').classList.add('active');
+          }
+
+          document.getElementById('telegramEnabled').checked = prefs.telegram_enabled;
+          document.getElementById('telegramChatId').value = prefs.telegram_chat_id || '';
+          if (prefs.telegram_enabled) {
+            document.getElementById('telegramDetails').classList.add('active');
+          }
+
+          document.getElementById('smsEnabled').checked = prefs.sms_enabled;
+          document.getElementById('smsNumber').value = prefs.sms_number || '';
+          if (prefs.sms_enabled) {
+            document.getElementById('smsDetails').classList.add('active');
+          }
+
+          document.getElementById('browserEnabled').checked = prefs.browser_notifications_enabled;
+        }
+      } catch (error) {
+        console.error('Failed to load preferences:', error);
+        showMessage('Failed to load preferences', 'error');
+      }
+    }
+
+    // Save preferences
+    document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const preferences = {
+        whatsapp_enabled: document.getElementById('whatsappEnabled').checked,
+        whatsapp_number: document.getElementById('whatsappNumber').value.trim(),
+        telegram_enabled: document.getElementById('telegramEnabled').checked,
+        telegram_chat_id: document.getElementById('telegramChatId').value.trim(),
+        sms_enabled: document.getElementById('smsEnabled').checked,
+        sms_number: document.getElementById('smsNumber').value.trim(),
+        browser_notifications_enabled: document.getElementById('browserEnabled').checked
+      };
+
+      try {
+        const response = await fetch('/api/user/preferences', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(preferences)
+        });
+
+        if (response.ok) {
+          showMessage('Preferences saved successfully!', 'success');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1500);
+        } else {
+          const data = await response.json();
+          showMessage(data.error || 'Failed to save preferences', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      }
+    });
+
+    // Test WhatsApp
+    document.getElementById('testWhatsApp').addEventListener('click', async () => {
+      const btn = document.getElementById('testWhatsApp');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('/api/test/whatsapp', {
+          method: 'POST',
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showMessage('WhatsApp test message sent!', 'success');
+        } else {
+          showMessage(data.error || 'Failed to send test message', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Test Message';
+      }
+    });
+
+    // Test Telegram
+    document.getElementById('testTelegram').addEventListener('click', async () => {
+      const btn = document.getElementById('testTelegram');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('/api/test/telegram', {
+          method: 'POST',
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showMessage('Telegram test message sent!', 'success');
+        } else {
+          showMessage(data.error || 'Failed to send test message', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Test Message';
+      }
+    });
+
+    // Test SMS
+    document.getElementById('testSMS').addEventListener('click', async () => {
+      const btn = document.getElementById('testSMS');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('/api/test/sms', {
+          method: 'POST',
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showMessage('SMS test message sent!', 'success');
+        } else {
+          showMessage(data.error || 'Failed to send test message', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Test Message';
+      }
+    });
+
+    // Initialize
+    loadPreferences();
+  </script>
+</body>
+</html>

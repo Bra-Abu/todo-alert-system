@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Todo Alert System</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      padding: 40px;
+      max-width: 450px;
+      width: 100%;
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--info));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .login-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-hover);
+    }
+
+    .form-group input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .btn-primary-large {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--info));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 10px;
+    }
+
+    .btn-primary-large:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary-large:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary-large {
+      width: 100%;
+      padding: 14px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .btn-secondary-large:hover {
+      background: var(--hover-bg);
+      border-color: var(--primary);
+    }
+
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .step {
+      width: 40px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .step.active {
+      background: var(--primary);
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      animation: slideDown 0.3s ease;
+    }
+
+    .message.success {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid var(--success-border);
+    }
+
+    .message.error {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border: 1px solid var(--danger-border);
+    }
+
+    .message.info {
+      background: var(--info-bg);
+      color: var(--info-text);
+      border: 1px solid var(--info-border);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .countdown {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .resend-link {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .resend-link:hover {
+      color: var(--info);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .help-text {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>🔔 Todo Alert System</h1>
+        <p>Stay on top of your tasks with smart alerts</p>
+      </div>
+
+      <div class="step-indicator">
+        <div class="step active" id="step1"></div>
+        <div class="step" id="step2"></div>
+      </div>
+
+      <div id="messageContainer"></div>
+
+      <!-- Step 1: Phone Number -->
+      <div id="phoneStep">
+        <form id="phoneForm">
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              placeholder="+1234567890"
+              required
+              pattern="^\+?[1-9]\d{1,14}$"
+            >
+            <small class="help-text">Enter in E.164 format (e.g., +1234567890)</small>
+          </div>
+
+          <div class="form-group">
+            <label for="userName">Your Name (Optional)</label>
+            <input
+              type="text"
+              id="userName"
+              placeholder="John Doe"
+            >
+          </div>
+
+          <button type="submit" class="btn-primary-large" id="sendOtpBtn">
+            Send Verification Code
+          </button>
+        </form>
+      </div>
+
+      <!-- Step 2: OTP Verification -->
+      <div id="otpStep" class="hidden">
+        <form id="otpForm">
+          <div class="form-group">
+            <label for="otpCode">Verification Code</label>
+            <input
+              type="text"
+              id="otpCode"
+              placeholder="123456"
+              required
+              pattern="[0-9]{6}"
+              maxlength="6"
+            >
+            <small class="help-text">Enter the 6-digit code sent to your phone</small>
+          </div>
+
+          <button type="submit" class="btn-primary-large" id="verifyOtpBtn">
+            Verify & Login
+          </button>
+
+          <button type="button" class="btn-secondary-large" id="backBtn">
+            Back
+          </button>
+
+          <div class="countdown" id="countdown">
+            Didn't receive code? <span class="resend-link" id="resendLink">Resend</span>
+          </div>
+        </form>
+      </div>
+
+      <div class="help-text" style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+        <p>🔒 Your phone number is used for authentication and receiving alerts</p>
+        <p>📱 SMS, WhatsApp, and Telegram notifications available</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPhoneNumber = '';
+    let resendTimer = null;
+
+    // Check if already authenticated
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/auth/check', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (data.authenticated) {
+          window.location.href = '/';
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      }
+    }
+
+    // Show message
+    function showMessage(text, type = 'info') {
+      const container = document.getElementById('messageContainer');
+      container.innerHTML = `<div class="message ${type}">${text}</div>`;
+      setTimeout(() => {
+        container.innerHTML = '';
+      }, 5000);
+    }
+
+    // Send OTP
+    document.getElementById('phoneForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      const userName = document.getElementById('userName').value.trim();
+      const sendBtn = document.getElementById('sendOtpBtn');
+
+      if (!phoneNumber.match(/^\+?[1-9]\d{1,14}$/)) {
+        showMessage('Please enter a valid phone number in E.164 format (e.g., +1234567890)', 'error');
+        return;
+      }
+
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumber })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          currentPhoneNumber = phoneNumber;
+
+          // Show OTP in message if SMS not configured (development mode)
+          if (data.otp) {
+            showMessage(`Development Mode: Your OTP is ${data.otp}`, 'info');
+          } else {
+            showMessage('Verification code sent to your phone!', 'success');
+          }
+
+          // Switch to OTP step
+          document.getElementById('phoneStep').classList.add('hidden');
+          document.getElementById('otpStep').classList.remove('hidden');
+          document.getElementById('step1').classList.remove('active');
+          document.getElementById('step2').classList.add('active');
+
+          // Focus OTP input
+          document.getElementById('otpCode').focus();
+
+          // Start resend countdown
+          startResendCountdown();
+        } else {
+          showMessage(data.error || 'Failed to send verification code', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send Verification Code';
+      }
+    });
+
+    // Verify OTP
+    document.getElementById('otpForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const code = document.getElementById('otpCode').value.trim();
+      const userName = document.getElementById('userName').value.trim();
+      const verifyBtn = document.getElementById('verifyOtpBtn');
+
+      if (!code.match(/^[0-9]{6}$/)) {
+        showMessage('Please enter a valid 6-digit code', 'error');
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying...';
+
+      try {
+        const response = await fetch('/api/auth/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            phoneNumber: currentPhoneNumber,
+            code,
+            name: userName || 'User'
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showMessage('Login successful! Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
+        } else {
+          showMessage(data.error || 'Invalid verification code', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      } finally {
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify & Login';
+      }
+    });
+
+    // Back button
+    document.getElementById('backBtn').addEventListener('click', () => {
+      document.getElementById('otpStep').classList.add('hidden');
+      document.getElementById('phoneStep').classList.remove('hidden');
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step1').classList.add('active');
+      document.getElementById('otpCode').value = '';
+      if (resendTimer) clearInterval(resendTimer);
+    });
+
+    // Resend OTP
+    document.getElementById('resendLink').addEventListener('click', async () => {
+      const resendLink = document.getElementById('resendLink');
+      if (resendLink.classList.contains('disabled')) return;
+
+      try {
+        const response = await fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumber: currentPhoneNumber })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          if (data.otp) {
+            showMessage(`Development Mode: Your new OTP is ${data.otp}`, 'info');
+          } else {
+            showMessage('New code sent!', 'success');
+          }
+          startResendCountdown();
+        } else {
+          showMessage(data.error || 'Failed to resend code', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error. Please try again.', 'error');
+      }
+    });
+
+    // Resend countdown
+    function startResendCountdown() {
+      let seconds = 60;
+      const resendLink = document.getElementById('resendLink');
+      const countdown = document.getElementById('countdown');
+
+      resendLink.classList.add('disabled');
+      resendLink.style.pointerEvents = 'none';
+      resendLink.style.opacity = '0.5';
+
+      if (resendTimer) clearInterval(resendTimer);
+
+      resendTimer = setInterval(() => {
+        seconds--;
+        countdown.innerHTML = `Resend available in ${seconds}s`;
+
+        if (seconds <= 0) {
+          clearInterval(resendTimer);
+          countdown.innerHTML = 'Didn\'t receive code? <span class="resend-link" id="resendLink">Resend</span>';
+          const newResendLink = document.getElementById('resendLink');
+          newResendLink.classList.remove('disabled');
+          newResendLink.style.pointerEvents = 'auto';
+          newResendLink.style.opacity = '1';
+          newResendLink.addEventListener('click', () => location.reload());
+        }
+      }, 1000);
+    }
+
+    // Initialize
+    checkAuth();
+  </script>
+</body>
+</html>
