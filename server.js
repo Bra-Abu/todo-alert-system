@@ -104,23 +104,26 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// Send OTP via SMS
-async function sendOTPSMS(phoneNumber, code) {
+// Send OTP via WhatsApp (free via Twilio sandbox)
+async function sendOTPWhatsApp(phoneNumber, code) {
   if (!twilioClient) {
     console.log('Twilio not configured for OTP');
     return false;
   }
 
   try {
+    // Convert phone number to WhatsApp format if not already
+    const whatsappNumber = phoneNumber.startsWith('whatsapp:') ? phoneNumber : `whatsapp:${phoneNumber}`;
+
     await twilioClient.messages.create({
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: phoneNumber,
-      body: `Your Todo Alert System verification code is: ${code}\n\nThis code expires in 10 minutes.`
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      to: whatsappNumber,
+      body: `🔐 *Todo Alert System*\n\nYour verification code is: *${code}*\n\nThis code expires in 10 minutes.`
     });
-    console.log(`OTP sent to ${phoneNumber}`);
+    console.log(`OTP sent via WhatsApp to ${phoneNumber}`);
     return true;
   } catch (error) {
-    console.error('OTP SMS error:', error.message);
+    console.error('OTP WhatsApp error:', error.message);
     return false;
   }
 }
@@ -374,16 +377,16 @@ app.post('/api/auth/send-otp', async (req, res) => {
     // Save OTP to database
     otpDB.create(phoneNumber, code);
 
-    // Send OTP via SMS
-    const sent = await sendOTPSMS(phoneNumber, code);
+    // Send OTP via WhatsApp (free via Twilio sandbox)
+    const sent = await sendOTPWhatsApp(phoneNumber, code);
 
     if (sent) {
-      res.json({ message: 'OTP sent successfully', phoneNumber });
+      res.json({ message: 'OTP sent to WhatsApp successfully', phoneNumber });
     } else {
       // For development/testing - OTP is logged to server console only (never sent to client)
       console.log(`[DEV ONLY] OTP for ${phoneNumber}: ${code}`);
       res.json({
-        message: 'OTP generated (Check server logs)',
+        message: 'OTP generated (Check server logs or WhatsApp)',
         phoneNumber
         // Security: OTP never sent to client
       });
