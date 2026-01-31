@@ -6,12 +6,16 @@ const path = require('path');
 const twilio = require('twilio');
 const TelegramBot = require('node-telegram-bot-api');
 const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 const bcrypt = require('bcrypt');
 const { db, userDB, taskDB, subtaskDB, otpDB } = require('./database');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Trust proxy - critical for Railway deployment
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(cors({
@@ -21,6 +25,10 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
+  store: new SQLiteStore({
+    db: 'sessions.db',
+    dir: './'
+  }),
   secret: process.env.SESSION_SECRET || 'todo-alert-super-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
