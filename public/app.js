@@ -71,6 +71,12 @@ function setupEventListeners() {
     testSMSBtn.addEventListener('click', testSMS);
     requestNotificationBtn.addEventListener('click', requestNotificationPermission);
 
+    // Toggle form visibility
+    const toggleFormBtn = document.getElementById('toggleFormBtn');
+    if (toggleFormBtn) {
+        toggleFormBtn.addEventListener('click', toggleTaskForm);
+    }
+
     // Close modal on background click
     editModal.addEventListener('click', (e) => {
         if (e.target === editModal) {
@@ -115,6 +121,20 @@ function toggleTheme() {
     const isDark = document.body.classList.contains('dark-mode');
     themeToggle.textContent = isDark ? '☀️' : '🌙';
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Toggle task form visibility
+function toggleTaskForm() {
+    const content = document.getElementById('taskFormContent');
+    const card = document.querySelector('.task-form-card');
+
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        card.classList.add('open');
+    } else {
+        content.classList.add('hidden');
+        card.classList.remove('open');
+    }
 }
 
 // ===== SEARCH, FILTER & SORT =====

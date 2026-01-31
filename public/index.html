@@ -6,7 +6,7 @@
     <title>Todo Alert System</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body style="opacity: 0; transition: opacity 0.3s ease;">
     <script>
         // Check authentication on page load
         (async function checkAuth() {
@@ -22,6 +22,8 @@
                     // Store user info
                     window.currentUser = data.user;
                     document.getElementById('userName').textContent = data.user.name || 'User';
+                    // Reveal the body after auth check
+                    document.body.style.opacity = '1';
                 }
             } catch (error) {
                 console.error('Auth check failed:', error);
@@ -54,15 +56,18 @@
 
         <!-- Add Task Form -->
         <div class="task-form-card">
-            <div class="form-header">
+            <div class="form-header" id="toggleFormBtn" style="cursor: pointer;">
                 <h2>➕ Add New Task</h2>
+                <span id="formArrow">▼</span>
+            </div>
+
+            <div id="taskFormContent" class="hidden">
                 <div class="template-actions">
                     <select id="templateSelect" class="template-select">
                         <option value="">💡 Use Template</option>
                     </select>
                 </div>
-            </div>
-            <form id="taskForm">
+                <form id="taskForm">
                 <div class="form-row">
                     <div class="form-group">
                         <label>Task Title *</label>
@@ -146,6 +151,7 @@
 
                 <button type="submit" class="btn btn-primary">Add Task</button>
             </form>
+            </div>
         </div>
 
         <!-- Test Alerts -->

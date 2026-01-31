@@ -243,6 +243,37 @@ header h1 {
     font-weight: 700;
 }
 
+/* Collapsible Form Styles */
+.hidden {
+    display: none;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: opacity 0.2s;
+    margin-bottom: 0 !important;
+}
+
+.form-header:hover {
+    opacity: 0.8;
+}
+
+#formArrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.task-form-card.open #formArrow {
+    transform: rotate(180deg);
+}
+
+#taskFormContent {
+    margin-top: 20px;
+}
+
 .form-row {
     display: grid;
     grid-template-columns: 1fr;
@@ -534,8 +565,20 @@ header h1 {
         font-size: 2rem;
     }
 
-    .form-row:has(.form-group:nth-child(3)) {
-        grid-template-columns: 1fr;
+    .form-row, .form-row:has(.form-group:nth-child(3)) {
+        grid-template-columns: 1fr; /* Stack everything vertically on mobile */
+    }
+
+    /* Larger tap targets for mobile */
+    .form-group input, .form-group select, .form-group textarea {
+        padding: 14px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    /* Better button sizes for mobile */
+    .btn {
+        padding: 14px 24px;
+        font-size: 16px;
     }
 
     .test-alerts {
@@ -550,6 +593,15 @@ header h1 {
 
     .task-actions {
         flex-direction: column;
+    }
+
+    /* Improved mobile spacing */
+    .container {
+        padding: 15px;
+    }
+
+    .task-form-card {
+        padding: 20px;
     }
 }
 
